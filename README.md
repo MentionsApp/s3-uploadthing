@@ -6,7 +6,7 @@ Simple utilities for uploading files to S3 using NextJS and Amazon STS federated
 
 ### Installation
 
-```
+```sh
 npm i @mentionsapp/s3-uploadthing
 
 # or
@@ -16,7 +16,7 @@ yarn add @mentionsapp/s3-uploadthing
 
 ### Environment variables
 
-```
+```sh
   S3_UPLOAD_KEY=##
   S3_UPLOAD_SECRET=##
   S3_UPLOAD_BUCKET=s3-bucket-example
