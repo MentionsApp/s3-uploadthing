@@ -1,0 +1,69 @@
+{
+	"name": "s3-uploadthing",
+	"author": "Davi Vilela <davivilelaa@gmail.com>",
+	"repository": "github:MentionsApp/s3-uploadthing",
+	"version": "0.0.0",
+	"type": "module",
+	"description": "boilerplate for your next TypeScript library",
+	"main": "dist/index.cjs",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"import": "./dist/index.js",
+			"default": "./dist/index.cjs"
+		}
+	},
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsup",
+		"format": "dprint fmt",
+		"lint": "run-p lint:*",
+		"lint:format": "dprint check",
+		"lint:types": "tsc",
+		"lint:js": "eslint .",
+		"prepublishOnly": "pnpm build",
+		"test": "vitest"
+	},
+	"peerDependencies": {
+		"next": ">=9.4"
+	},
+	"devDependencies": {
+		"@sachinraja/eslint-config": "0.2.0",
+		"@types/node": "18.16.0",
+		"@types/uuid": "^9.0.1",
+		"dprint": "0.36.0",
+		"eslint": "8.39.0",
+		"next": "^10.0.1",
+		"npm-run-all": "4.1.5",
+		"tsup": "6.7.0",
+		"typescript": "5.0.4",
+		"vite": "4.3.1",
+		"vitest": "0.30.1"
+	},
+	"sideEffects": false,
+	"tsup": {
+		"entry": [
+			"src/index.ts"
+		],
+		"format": [
+			"esm",
+			"cjs"
+		],
+		"dts": {
+			"resolve": true
+		},
+		"splitting": true,
+		"clean": true
+	},
+	"packageManager": "pnpm@8.5.1",
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.332.0",
+		"@aws-sdk/client-sts": "^3.332.0",
+		"@aws-sdk/lib-storage": "^3.332.0",
+		"@aws-sdk/s3-request-presigner": "^3.332.0",
+		"uuid": "^9.0.0"
+	}
+}
