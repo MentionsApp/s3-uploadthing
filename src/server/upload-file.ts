@@ -31,11 +31,16 @@ type FactoryOptions = S3Config & {
 const resolveMiddleware =
   (req: NextApiRequest, res: NextApiResponse) =>
   async (middleware?: MiddlewareFn) => {
-    return middleware ? await middleware?.(req, res) : {};
+    const resp = middleware ? await middleware?.(req, res) : {};
+
+
+    return resp || {}
   };
 
 /** base path: pages/api/s3-uploader */
-export const makeS3Uploader = (options: FactoryOptions): NextRouteHandler => {
+export const makeS3UploaderHandler = (
+  options: FactoryOptions
+): NextRouteHandler => {
   const routeHandler: NextRouteHandler = async (req, res) => {
     const config = getConfig();
 

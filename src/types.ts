@@ -3,8 +3,6 @@ export type S3Config = {
   secretAccessKey?: string;
   bucket?: string;
   region?: string;
-  endpoint?: string;
-  forcePathStyle?: boolean;
 };
 
 export type UploadResult = {

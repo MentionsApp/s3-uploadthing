@@ -1,139 +1,235 @@
-# ts-lib-starter
+# S3-uploadthing
 
-Boilerplate for your next TypeScript library. Build with speed.
+Simple utilities for uploading files to S3 using NextJS and Amazon STS federated tokens
 
-## Features
+## Setup
 
-### [pnpm](https://pnpm.io/)
+### Installation
 
-A fast and efficient package manager. Packages are linked from a single, global store.
+```
+npm i @mentionsapp/s3-uploadthing
 
-### [tsup](https://tsup.egoist.sh/)
+# or
 
-A quick, easy-to-use, and zero config bundler powered by esbuild. This allows for dual publishing esm and cjs . It also produces only one type definition file for each entrypoint.
+yarn add @mentionsapp/s3-uploadthing
+```
 
-### [vitest](https://vitest.dev/)
+### Environment variables
 
-A testing framework. Uses [Vite](https://vitejs.dev/) for building your code, so look through the Vite docs if you need to add plugins.
+```
+  S3_UPLOAD_KEY=##
+  S3_UPLOAD_SECRET=##
+  S3_UPLOAD_BUCKET=s3-bucket-example
+  S3_UPLOAD_REGION=us-east-1
+```
 
-### [dprint](https://dprint.dev/)
+### Bucket setup
 
-A pluggable and configurable code formatting platform written in Rust. Faster alternative to Prettier.
+TODO
 
-### [ESLint](https://eslint.org/) and [TypeScript ESLint](https://typescript-eslint.io/)
 
-Linter that helps you find problems in your code.
+### STS Setup
 
-### [npm-run-all](https://github.com/mysticatea/npm-run-all)
 
-Run dprint, TypeScript, and ESLint checks in parallel.
+First, let's generate API keys to grant your Next app AWS access.
 
-### [Github Actions](https://github.com/features/actions)
+Access the IAM section in AWS and create a new user with Programmatic access.
 
-Run all your checks on each commit.
+In the permissions step, choose "Attach existing policies directly" and click the "Create policy" button.
 
-Ensure all files are formatted before they are committed and run linters on changed files.
+### Policy:
 
-### [Renovate](https://www.whitesourcesoftware.com/free-developer-tools/renovate/)
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "STSToken",
+      "Effect": "Allow",
+      "Action": "sts:GetFederationToken",
+      "Resource": ["arn:aws:sts::AMAZON_ACCOUNT_ID:federated-user/S3UploadWebToken"]
+    },
+    {
+      "Sid": "S3UploadAssets",
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::BUCKET_NAME",
+        "arn:aws:s3:::BUCKET_NAME/*.jpg",
+        "arn:aws:s3:::BUCKET_NAME/*.jpeg",
+        "arn:aws:s3:::BUCKET_NAME/*.png",
+        "arn:aws:s3:::BUCKET_NAME/*.gif",
+      ]
+    }
+  ]
+}
+```
 
-Automatically opens PRs to update dependencies. Automerges patch and minor updates, but not major updates or any `typescript` updates. Also pins all `devDependencies`) to use exact versions (**no** `^` before version signifying that the latest patch version can be matched, only the version specified can be used).
+> Dont forget to replace `AMAZON_ACCOUNT_ID` and `BUCKET_NAME`
 
-## Usage
 
-This is esm-first, meaning you should write esm and it is transpiled to both esm and cjs. For example, use:
+### Next API Route:
+
+basic usage:
 
 ```ts
-import path from 'path'
-import { fileURLToPath } from 'url'
+// pages/api/s3-uploader.ts
+import { makeS3UploaderHandler } from "@mentionsapp/s3-uploadthing";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+export makeS3UploaderHandler()
 ```
 
-instead of `__dirname`.
 
-### Setup
+Overriding ENV config:
 
-1. [Install pnpm](https://pnpm.io/installation)
+```ts
+import { makeS3UploaderHandler } from "@mentionsapp/s3-uploadthing";
 
-2. [Grant Renovate access to your GitHub repos](https://github.com/marketplace/renovate)
-
-3. Copy the repo, replace `mypackage` with your repository name:
-
-```
-pnpx degit sachinraja/ts-lib-starter mypackage && cd mypackage
-```
-
-4. Search and replace all instances of `ts-lib-starter` with your package name. Remove `LICENSE` or replace it with your own.
-
-5. Install dependencies:
-
-```
-pnpm i
+export default makeS3UploaderHandler({
+  accessKeyId: '...',
+  bucket: '...',
+  secretAccessKey: '...',
+  region: '...',
+})
 ```
 
-6. Lint package:
 
+Overriding Key creation:
+
+```ts
+import { makeS3UploaderHandler } from "@mentionsapp/s3-uploadthing";
+
+export default makeS3UploaderHandler({
+  key(req, filename) {
+    const userId = getSession(req);
+    return `${userId}/${req.body.filePath}/${filename}`;
+  },
+});
 ```
-pnpm lint
-```
 
-7. Test package:
+Middleware usage:
 
-```
-pnpm t
-```
+```ts
+export default makeS3UploaderHandler({
+  key(req, res) {
+    const user = await auth(req, res);
 
-Note that there is a workflow in `.github/workflows/test.yml` that will run on each commit if you push it to GitHub.
-
-### Publishing
-
-Run `pnpm publish` to publish the package. Make sure the version is what you want to publish before publishing. Building the package (in a `prepublishOnly` script) and setting the relevant `package.json` attributes are already done. Note that [`sideEffects`](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free) is set to `false`, so bundlers like Webpack can tree shake the package:
-
-> A "side effect" is defined as code that performs a special behavior when imported, other than exposing one or more exports. An example of this are polyfills, which affect the global scope and usually do not provide an export.
-
-### Entry Points
-
-An entry point is a path that modules from your package can be imported from. The default entry point for this starter is `.`, which simply means that `src/index.ts` can be imported as `ts-lib-starter` (your package name).
-
-If you want to add an entrypoint, you must do the following:
-
-1. Specify the path you want to users to import your module from. For this example, I will use the file `src/constants.ts` and expose the entry point as `ts-lib-starter/constants`. Add the following in `package.json` exports:
-
-```jsonc
-"exports": {
-    ".": {
-        // ...
-    },
-    "./constants": {
-        "import": "./dist/constants.js",
-        "default": "./dist/constants.cjs"
+    if(!user) {
+      return res.status(401)
     }
-}
+  },
+});
 ```
 
-This exposes the module to users in multiple formats. `import` is used when a user uses an esm import for the entry point. `default` is used in any other case (i.e. a cjs `require`).
 
-2. Add the file to the `tsup` build in the `package.json` config:
+### Client usage:
 
-```diff
-{
-  "tsup": {
-    "entryPoints": [
-      "src/index.ts",
-+     "src/constants.ts"
-    ]
-    "format": [
-      "esm",
-      "cjs"
-    ],
-    "dts": {
-      "resolve": true
-    },
-    "splitting": true
+```tsx
+import { uploadFile } from "@mentionsapp/s3-uploadthing";
+
+export function UploadImage() {
+  const inputRef = useRef(null);
+  const [uploading, setUploading] = useState(false)
+  const [uploadResult, setUploadResult] = useState(undefined)
+  const [progress, setProgress] = useState(0)
+
+  const onPickFile = () => {
+    inputRef.current.click();
   }
+
+  const doUploadFile = async (file: File) => {
+    setUploading(true)
+    const result = await uploadFile(file, {
+      eventHandlers: {
+        onProgress: (uploaded) => {
+          const loaded = file.size ? (uploaded / file.size) * 100 : 0;
+          setProgress(loaded)
+        },
+      },
+      endpoint: { // optional settings
+        request: {
+          url: '...', // if you want to customize the uploader URL.
+          body: {
+            userId: '...' // optional
+          },
+          headers: {
+            'Authorization': "Bearer XXXXXX" // optional
+          }
+        }
+      }
+    });
+
+    if(result) {
+      const { url, bucket, key } = result
+
+      setUploadResult({ url, bucket, key }) 
+    }
+
+    setUploading(false)
+  }
+
+  const onFile = (event) => {
+    const fileObj = event.target.files && event.target.files[0];
+    if (!fileObj) {
+      return;
+    }
+
+  }
+
+  if(uploading) return <span> uploading </span>
+
+
+  return (
+    <input 
+      type='file' 
+      id='file' 
+      ref={inputRef} 
+      onChange={onFile} 
+      style={{display: 'none'}}
+    />
+
+    <div>
+      {
+        !uploading && (
+          <button onClick={onPickFile}>pick file</button>
+        )
+      }
+
+      {
+        !!uploadResult && (
+          <img src={uploadResult.url} />
+        )
+      }
+      
+      {
+        !!uploading && (
+          <p>{progress} %</p>
+        )
+      }
+    </div>
+  )
 }
 ```
 
-Note the options here. `format` specifies for the package to be bundled in both esm and cjs, which allows for a dual publish. `dts.resolve` is used to bundle types for `devDependencies`. For example, if you use a TypeScript utilities package, such as [`ts-essentials`](https://github.com/krzkaczor/ts-essentials), the types will be bundled (in the `.d.ts` files) to avoid a dependency on `ts-essentials`. `splitting` enables an experimental feature that allows for creating chunks with cjs. This helps to avoid duplicating code with a package with multiple entry points.
+### Generating temporary URL's for private uploads:
 
-The `entryPoints` (`src/index.ts` and `src/constants.ts`), specify the files that are our entry points, so when you add an entry point, it must also be added to the `build` config like before.
+#### API Route:
+
+```ts
+export { GenerateTemporaryUrlHandler as default } from "@mentionsapp/s3-uploadthing";
+```
+
+#### On the client:
+
+simply use `getUrlForKey` on html `<img />`:
+
+```tsx
+  import { getUrlForKey } from "@mentionsapp/s3-uploadthing";
+
+  //...
+
+  function Component() {
+      // ...
+    return <img src={getUrlForKey(key)} />
+  }
+```

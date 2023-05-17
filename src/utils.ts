@@ -11,8 +11,7 @@ export function getConfig(s3Config?: S3Config) {
       s3Config?.secretAccessKey ?? `${process.env.S3_UPLOAD_SECRET}`,
     bucket: s3Config?.bucket ?? `${process.env.S3_UPLOAD_BUCKET}`,
     region: s3Config?.region ?? `${process.env.S3_UPLOAD_REGION}`,
-    endpoint: s3Config?.endpoint,
-    forcePathStyle: s3Config?.forcePathStyle,
+    
   };
 }
 
@@ -25,8 +24,6 @@ export function getClient(s3Config?: S3Config) {
       secretAccessKey: config.secretAccessKey,
     },
     region: config.region,
-    ...(config.forcePathStyle ? { forcePathStyle: config.forcePathStyle } : {}),
-    ...(config.endpoint ? { endpoint: config.endpoint } : {}),
   });
 }
 
@@ -53,3 +50,6 @@ export const uuid = () => uuidv4();
 const SAFE_CHARACTERS = /[^0-9a-zA-Z!_\\.\\*'\\(\\)\\\-/]/g;
 export const sanitizeKey = (value: string) =>
   value.replace(SAFE_CHARACTERS, " ").replace(/\s+/g, "-");
+
+
+export const getUrlForKey = (key: string) => `/pages/api/s3-temporary-url?key=${key}`
