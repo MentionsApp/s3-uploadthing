@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { generateTemporaryUrl } from "../utils";
 
-/** Base path: /api/s3-temporary-url.ts */
-export default async function GenerateTemporaryUrlHandler(
+/** Base path: pages/api/s3-temporary-url.ts */
+export async function GenerateTemporaryUrlHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

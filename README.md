@@ -216,6 +216,7 @@ export function UploadImage() {
 #### API Route:
 
 ```ts
+// pages/api/s3-temporary-url.ts
 export { GenerateTemporaryUrlHandler as default } from "@mentionsapp/s3-uploadthing";
 ```
 
