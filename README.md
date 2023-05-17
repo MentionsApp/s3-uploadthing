@@ -111,7 +111,7 @@ Middleware usage:
 
 ```ts
 export default makeS3UploaderHandler({
-  key(req, res) {
+  middleware(req, res) {
     const user = await auth(req, res);
 
     if(!user) {
