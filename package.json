@@ -1,5 +1,5 @@
 {
-	"name": "s3-uploadthing",
+	"name": "@mentionsapp/s3-uploadthing",
 	"author": "Davi Vilela <davivilelaa@gmail.com>",
 	"repository": "github:MentionsApp/s3-uploadthing",
 	"version": "0.0.1",
