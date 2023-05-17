@@ -2,7 +2,7 @@
 	"name": "s3-uploadthing",
 	"author": "Davi Vilela <davivilelaa@gmail.com>",
 	"repository": "github:MentionsApp/s3-uploadthing",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"type": "module",
 	"description": "boilerplate for your next TypeScript library",
 	"main": "dist/index.cjs",
