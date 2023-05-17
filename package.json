@@ -4,6 +4,7 @@
 	"repository": "github:MentionsApp/s3-uploadthing",
 	"version": "0.0.1",
 	"type": "module",
+	"private": false,
 	"description": "boilerplate for your next TypeScript library",
 	"main": "dist/index.cjs",
 	"exports": {
