@@ -55,7 +55,7 @@ const uploadWithS3SDK: Uploader<UploadS3Params> = async (
   params,
   eventHandlers
 ) => {
-  let { key, bucket, token, region } = params;
+  const { key, bucket, token, region } = params;
 
   const client = getClient(token, region);
 

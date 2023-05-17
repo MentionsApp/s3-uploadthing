@@ -47,7 +47,7 @@ export const makeS3UploaderHandler = (
     const missingEnvs = configInvariant(config);
     const filename = req.body.filename;
 
-    if (!!missingEnvs.length) {
+    if (missingEnvs.length > 0) {
       res.status(500).json({
         error: `[S3UploadThing]: Missing Envs: ${missingEnvs.join(", ")}`,
       });

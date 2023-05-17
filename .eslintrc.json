@@ -1,7 +1,9 @@
 {
-	"extends": ["next/core-web-vitals", "prettier"],
-  "plugins": ["prettier"],
-    "rules": {
-    "prettier/prettier": "error"
+	"root": true,
+	"extends": "@sachinraja",
+  "rules": {
+    "unicorn/prevent-abbreviations": "off",
+    "unicorn/consistent-destructuring": "off",
+    "@typescript-eslint/ban-types": "off"
   }
 }
