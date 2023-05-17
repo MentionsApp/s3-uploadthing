@@ -39,7 +39,7 @@ const resolveMiddleware =
 
 /** base path: pages/api/s3-uploader */
 export const makeS3UploaderHandler = (
-  options: FactoryOptions
+  options: FactoryOptions = {}
 ): NextRouteHandler => {
   const routeHandler: NextRouteHandler = async (req, res) => {
     const config = getConfig();
