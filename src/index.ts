@@ -1,4 +1,4 @@
 export * from "./client";
 export * from "./server";
 export * from "./types";
-export { sanitizeKey } from "./utils";
+export { sanitizeKey, getUrlForKey } from "./utils";
