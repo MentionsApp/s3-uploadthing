@@ -52,4 +52,4 @@ export const sanitizeKey = (value: string) =>
   value.replace(SAFE_CHARACTERS, " ").replace(/\s+/g, "-");
 
 
-export const getUrlForKey = (key: string) => `/pages/api/s3-temporary-url?key=${key}`
+export const getUrlForKey = (key: string) => `/api/s3-temporary-url?key=${key}`
